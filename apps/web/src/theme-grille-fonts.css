@@ -1,0 +1,7 @@
+/* Font aliases for the Grille theme: the theme sheet (kept verbatim) asks for
+   "Archivo", while @fontsource-variable/archivo registers "Archivo Variable".
+   One rule, no network request: the variable file is bundled by Vite.
+   Loaded after theme-grille.css so the alias wins the cascade. */
+:root {
+  --f-display: "Archivo Variable", "Arial Narrow", Arial, sans-serif;
+}
