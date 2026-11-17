@@ -57,7 +57,7 @@ describe("reading the patched cells back", () => {
         {
           sheetId: 1,
           ref: "A2",
-          record: { ref: "A2", kind: "s", input: "Loyer", cached: "", fmt: "" },
+          record: { ref: "A2", kind: "s", input: "Rent", cached: "", fmt: "" },
           source: "A",
         },
       ],

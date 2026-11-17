@@ -228,16 +228,16 @@ describe("deriveCanonical — defined names", () => {
     const parts = buildWorkbookParts({
       sheets: [
         { name: "Budget", sheetId: 4, rows: "" },
-        { name: "Hypotheses", sheetId: 9, rows: "" },
+        { name: "Assumptions", sheetId: 9, rows: "" },
       ],
       definedNamesXml:
         '<definedName name="TVA">0.2</definedName>' +
-        '<definedName name="Zone" localSheetId="1">Hypotheses!$A$1:$A$9</definedName>',
+        '<definedName name="Zone" localSheetId="1">Assumptions!$A$1:$A$9</definedName>',
     });
     const names = deriveCanonical(parts).meta.definedNames;
     expect(names).toEqual([
       { name: "TVA", formula: "0.2" },
-      { name: "Zone", formula: "Hypotheses!$A$1:$A$9", sheetId: 9 },
+      { name: "Zone", formula: "Assumptions!$A$1:$A$9", sheetId: 9 },
     ]);
   });
 });

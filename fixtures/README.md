@@ -19,10 +19,10 @@ The scenario of the demo (Nadia, the volunteer treasurer):
 | File | What it contains |
 |---|---|
 | `budget-2026.xlsx` | The reference workbook sent on Monday. |
-| `budget-2026-paul.xlsx` | Paul corrected three amounts (Énergie, Fournitures, Salaires) and added a `Transport` row. |
-| `budget-2026-v2-marie-FINAL.xlsx` | Marie changed one hypothesis (Croissance 3 % → 5 %) and corrected `Salaires` differently from Paul. |
+| `budget-2026-paul.xlsx` | Paul corrected three amounts (Energy, Supplies, Salaries) and added a `Transport` row. |
+| `budget-2026-v2-marie-FINAL.xlsx` | Marie changed one assumption (Growth 3 % → 5 %) and corrected `Salaries` differently from Paul. |
 
-`Salaires` is the cell where the two sides disagree: 60 000 in the reference,
+`Salaries` is the cell where the two sides disagree: 60 000 in the reference,
 61 000 for Paul, 62 000 for Marie. It is the single disagreement of the demo.
 
 ## The edge-case corpus

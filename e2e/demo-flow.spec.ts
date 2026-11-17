@@ -25,10 +25,10 @@ const MAX_DEMO_ATTEMPTS = 4;
 
 test.describe.configure({ mode: "serial" });
 
-/** Loads the demo workbook (in French) and opens its screen. */
+/** Loads the demo workbook (in English) and opens its screen. */
 async function loadDemoWorkbook(page: Page): Promise<void> {
   await page.goto("/suture/");
-  await page.locator(".lang-picker select").selectOption("fr");
+  await page.locator(".lang-picker select").selectOption("en");
   await page.locator(".demo-button").click();
   await expect(page.locator(".workbook-entry")).toBeVisible({ timeout: 90_000 });
   await page.locator(".workbook-entry").click();
@@ -44,7 +44,7 @@ async function expectDemoScenarios(page: Page): Promise<void> {
 /** Compares two versions and checks the grid and the deterministic summary. */
 async function compareTwoVersions(page: Page): Promise<void> {
   await page
-    .locator(".workbook-actions button", { hasText: "Comparer deux versions" })
+    .locator(".workbook-actions button", { hasText: "Compare two versions" })
     .click();
   const picks = page.locator(".compare-versions select");
   await expect(picks).toHaveCount(2);
@@ -65,7 +65,7 @@ async function backToWorkbook(page: Page): Promise<void> {
 /** Starts the Paul × Marie meeting and lands on step 2 (the disagreements). */
 async function startPaulMarieMeeting(page: Page): Promise<void> {
   await page
-    .locator(".workbook-actions button", { hasText: "Réunir deux scénarios" })
+    .locator(".workbook-actions button", { hasText: "Combine two scenarios" })
     .click();
   const picker = page.locator(".scenario-picker select");
   await expect(picker).toHaveCount(2);
@@ -74,7 +74,7 @@ async function startPaulMarieMeeting(page: Page): Promise<void> {
   await page.locator(".picker-start").click();
   await expect(page.locator("#combine-step1-title")).toBeVisible({ timeout: 60_000 });
   await expect(page.locator('[data-testid="automatic-count"]')).toContainText(/\d/);
-  await page.getByRole("button", { name: "Continuer" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.locator("#combine-step2-title")).toBeVisible();
 }
 
@@ -141,15 +141,15 @@ test.describe("Parcours de démonstration complet", () => {
     const report = page.locator('[data-testid="report"]');
     await expect(report).toBeVisible();
     const sections = report.locator(".report-section");
-    await expect(sections.nth(0).locator("h4")).toContainText("Appliqué");
+    await expect(sections.nth(0).locator("h4")).toContainText("Applied");
     await expect(sections.nth(0).locator("tbody tr").first()).toBeVisible({ timeout: 60_000 });
     await expect(sections.nth(0)).toContainText("Transport");
-    await expect(sections.nth(1).locator("h4")).toContainText("Tranché");
+    await expect(sections.nth(1).locator("h4")).toContainText("Settled by you");
 
     // 9 — the combined version is recorded on the thread, with two origins.
     await backToWorkbook(page);
     await expect(page.locator(".version-row")).toHaveCount(4, { timeout: 30_000 });
-    await expect(page.locator(".version-row").first()).toContainText("2 origines");
+    await expect(page.locator(".version-row").first()).toContainText("2 origins");
   });
 
   test("fumée LibreOffice : le classeur réuni se convertit et contient la valeur tranchée", async () => {

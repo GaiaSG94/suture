@@ -33,10 +33,10 @@ describe("patchWorkbook — cell values", () => {
     const before = parts.find((part) => part.path === "xl/sharedStrings.xml")?.data;
     const result = patchWorkbook(
       parts,
-      request([{ sheetId: 1, ref: "A2", record: { ref: "", kind: "s", input: "Loyer", cached: "", fmt: "" }, source: "B" }]),
+      request([{ sheetId: 1, ref: "A2", record: { ref: "", kind: "s", input: "Rent", cached: "", fmt: "" }, source: "B" }]),
     );
     expect(cellSource(sheetXml(result.parts), "A2")).toBe(
-      '<c r="A2" s="1" t="inlineStr"><is><t xml:space="preserve">Loyer</t></is></c>',
+      '<c r="A2" s="1" t="inlineStr"><is><t xml:space="preserve">Rent</t></is></c>',
     );
     const after = result.parts.find((part) => part.path === "xl/sharedStrings.xml")?.data;
     expect(after).toBe(before);
@@ -263,12 +263,12 @@ describe("patchWorkbook — error handling", () => {
       parts,
       request([
         { sheetId: 1, ref: "B2", record: number("13500"), source: "A" },
-        { sheetId: 1, ref: "A2", record: { ref: "", kind: "s", input: "Loyer", cached: "", fmt: "" }, source: "A" },
+        { sheetId: 1, ref: "A2", record: { ref: "", kind: "s", input: "Rent", cached: "", fmt: "" }, source: "A" },
       ]),
     );
     const cells = readSheetCells(sheetXml(result.parts));
     expect(cells.find((cell) => cell.ref === "B2")?.input).toBe("13500");
-    expect(cells.find((cell) => cell.ref === "A2")?.input).toBe("Loyer");
+    expect(cells.find((cell) => cell.ref === "A2")?.input).toBe("Rent");
   });
 });
 

@@ -16,7 +16,7 @@ function fakeStore(): StoreAdapter {
     disagreements: [
       { id: "d1", sheetName: "Budget", ref: "B7", base: "11000", a: "12000", b: "13500" },
     ],
-    fallbacks: [{ sheetName: "Hypotheses" }],
+    fallbacks: [{ sheetName: "Assumptions" }],
     choices: {} as Record<string, { id: string; pick: "A" | "B" | "custom" }>,
     report: [
       {
@@ -36,7 +36,7 @@ function fakeStore(): StoreAdapter {
       {
         category: "not-carried" as const,
         side: "both" as const,
-        sheetName: "Hypotheses",
+        sheetName: "Assumptions",
         label: "chart",
       },
     ],

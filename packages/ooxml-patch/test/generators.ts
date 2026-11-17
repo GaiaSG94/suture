@@ -179,7 +179,7 @@ function sharedStrings(): string {
   return (
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="3" uniqueCount="3">' +
-    "<si><t>Poste</t></si><si><t>Montant</t></si><si><t>Loyer</t></si></sst>"
+    "<si><t>Item</t></si><si><t>Amount</t></si><si><t>Rent</t></si></sst>"
   );
 }
 

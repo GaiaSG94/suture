@@ -19,7 +19,7 @@ node tools/fixture-builder/build-all.mjs
     {
       "name": "Budget",
       "cells": [
-        { "ref": "A1", "value": "Poste" },
+        { "ref": "A1", "value": "Item" },
         { "ref": "B2", "value": 13500, "format": "#,##0 €" },
         { "ref": "B6", "formula": "SUM(B2:B5)", "cached": 76500 }
       ]

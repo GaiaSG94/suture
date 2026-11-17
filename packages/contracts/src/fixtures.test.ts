@@ -208,7 +208,7 @@ describe("fixture corpus", () => {
     for (const path of [ORIGINAL, PAUL, MARIE]) {
       expect(existsSync(path)).toBe(true);
       const parts = unzipFile(path);
-      expect(sheetNames(parts)).toEqual(["Budget", "Hypothèses"]);
+      expect(sheetNames(parts)).toEqual(["Budget", "Assumptions"]);
     }
   });
 });
@@ -220,10 +220,10 @@ describe("demo scenario differences", () => {
     const changed = [...original.keys()].filter(
       (label) => label !== "Total" && original.get(label) !== paul.get(label),
     );
-    expect(changed).toEqual(["Énergie", "Fournitures", "Salaires"]);
-    expect(paul.get("Énergie")).toBe("2400");
-    expect(paul.get("Fournitures")).toBe("950");
-    expect(paul.get("Salaires")).toBe("61000");
+    expect(changed).toEqual(["Energy", "Supplies", "Salaries"]);
+    expect(paul.get("Energy")).toBe("2400");
+    expect(paul.get("Supplies")).toBe("950");
+    expect(paul.get("Salaries")).toBe("61000");
     // One extra row: the transport line.
     expect(labelsOf(firstSheetCells(unzipFile(PAUL)))).toContain("Transport");
     expect(labelsOf(firstSheetCells(unzipFile(ORIGINAL)))).not.toContain("Transport");
@@ -237,7 +237,7 @@ describe("demo scenario differences", () => {
     const marie = amountsByLabel(firstSheetCells(parts));
     const hypotheses = parseCells(parts, "xl/worksheets/sheet2.xml");
     expect(hypotheses.get("B2")?.value).toBe("0.05");
-    expect(marie.get("Salaires")).toBe("62000");
+    expect(marie.get("Salaries")).toBe("62000");
     expect(marie.get("Total")).toBe("78500");
   });
 
@@ -252,15 +252,15 @@ describe("demo scenario differences", () => {
       const values = new Set([original.get(label), paul.get(label), marie.get(label)]);
       if (values.size > 1) divergent.push(label);
     }
-    expect(divergent.sort()).toEqual(["Fournitures", "Salaires", "Énergie"]);
-    // Only "Salaires" was corrected on both sides, with two different amounts.
+    expect(divergent.sort()).toEqual(["Energy", "Salaries", "Supplies"]);
+    // Only "Salaries" was corrected on both sides, with two different amounts.
     const bothSides = divergent.filter(
       (label) => original.get(label) !== paul.get(label) && original.get(label) !== marie.get(label),
     );
-    expect(bothSides).toEqual(["Salaires"]);
-    expect(paul.get("Salaires")).toBe("61000");
-    expect(marie.get("Salaires")).toBe("62000");
-    expect(original.get("Salaires")).toBe("60000");
+    expect(bothSides).toEqual(["Salaries"]);
+    expect(paul.get("Salaries")).toBe("61000");
+    expect(marie.get("Salaries")).toBe("62000");
+    expect(original.get("Salaries")).toBe("60000");
   });
 });
 
