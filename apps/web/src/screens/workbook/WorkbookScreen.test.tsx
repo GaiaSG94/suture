@@ -61,6 +61,7 @@ function emptyStore(): StoreAdapter {
     startCombine: async () => undefined,
     chooseDisagreement: () => undefined,
     finalizeCombine: async () => undefined,
+    downloadCombinedWorkbook: () => undefined,
     cellHistory: null,
     showCellHistory: async () => undefined,
     authorName: "",

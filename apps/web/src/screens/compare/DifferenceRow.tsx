@@ -22,6 +22,8 @@ export interface DifferenceRowProps {
   rowRef: Ref<HTMLDivElement>;
   onFocus: () => void;
   onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
+  /** Opens the history of the cell (SUT-F-26). */
+  onOpenHistory: () => void;
 }
 
 /** One difference: symbol, sheet, cell, nature and the values before / after. */
@@ -42,7 +44,16 @@ export function DifferenceRow(props: DifferenceRowProps) {
       aria-label={props.rowLabel}
       tabIndex={props.active ? 0 : -1}
       onFocus={props.onFocus}
-      onKeyDown={props.onKeyDown}
+      onKeyDown={(event) => {
+        // Enter opens the history of the cell, like a click does.
+        if (event.key === "Enter") {
+          event.preventDefault();
+          props.onOpenHistory();
+          return;
+        }
+        props.onKeyDown(event);
+      }}
+      onClick={props.onOpenHistory}
     >
       <span className="difference-symbol" role="img" aria-label={props.symbolLabel}>
         {props.symbol}

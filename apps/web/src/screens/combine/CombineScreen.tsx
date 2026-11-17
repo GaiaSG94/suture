@@ -8,7 +8,6 @@ import { StepThree } from "./StepThree";
 import { ScenarioPicker } from "./ScenarioPicker";
 import { TwoFileAssistant } from "./TwoFileAssistant";
 import {
-  canBuildReport,
   type CombineChoice,
   type CombineState,
   type CombineStep,
@@ -27,7 +26,6 @@ export function CombineScreen() {
   const store = useStore();
   const [step, setStep] = useState<CombineStep>(1);
   const [chosenFallbacks, setChosenFallbacks] = useState<Record<string, Side>>({});
-  const [finished, setFinished] = useState(false);
 
   const state = store.combine;
 
@@ -49,7 +47,7 @@ export function CombineScreen() {
   }
 
   const onCombine = () => {
-    void store.finalizeCombine().then(() => setFinished(true));
+    void store.finalizeCombine();
     setStep(3);
   };
 
@@ -62,7 +60,7 @@ export function CombineScreen() {
         step={step}
         state={state}
         chosenFallbacks={chosenFallbacks}
-        ready={canBuildReport(state, chosenFallbacks) && finished}
+        ready={state.workbookReady}
         onChoose={(choice: CombineChoice) => store.chooseDisagreement(choice.id, choice)}
         onKeepSide={(sheetName: string, side: Side) =>
           setChosenFallbacks((previous) => ({ ...previous, [sheetName]: side }))
@@ -70,7 +68,7 @@ export function CombineScreen() {
         onCombine={onCombine}
         onBack={() => setStep(2)}
         onNext={() => setStep(2)}
-        onDownloadWorkbook={() => void store.finalizeCombine()}
+        onDownloadWorkbook={() => store.downloadCombinedWorkbook()}
       />
     </section>
   );

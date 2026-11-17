@@ -89,6 +89,8 @@ export interface CombineView {
   report: ReportEntry[];
   /** True when every disagreement has an answer. */
   ready: boolean;
+  /** True once the combined workbook exists and can be downloaded again. */
+  workbookReady: boolean;
 }
 
 export interface StoreAdapter {
@@ -123,6 +125,8 @@ export interface StoreAdapter {
   startCombine(sideA: string, sideB: string): Promise<void>;
   chooseDisagreement(id: string, choice: DisagreementChoice): void;
   finalizeCombine(): Promise<void>;
+  /** Offers the combined workbook again, without recomputing it. */
+  downloadCombinedWorkbook(): void;
 
   // Screen 5 — cell history
   cellHistory: CellHistoryEntry[] | null;
@@ -169,6 +173,7 @@ export function createStubStore(): StoreAdapter {
     startCombine: async () => undefined,
     chooseDisagreement: () => undefined,
     finalizeCombine: async () => undefined,
+    downloadCombinedWorkbook: () => undefined,
     cellHistory: null,
     showCellHistory: async () => undefined,
     authorName: "",

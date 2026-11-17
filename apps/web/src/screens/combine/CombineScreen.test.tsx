@@ -1,14 +1,38 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { LangContext } from "../../i18n/lang";
 import { StoreContext, type StoreAdapter } from "../../store";
 import { CombineScreen } from "./CombineScreen";
 
-/** A combine plan with one disagreement and one refused sheet. */
-function fakeStore(): StoreAdapter {
-  const state = {
+/** The report of a finished combine, as the store hands it to the screen. */
+const REPORT = [
+  {
+    category: "applied" as const,
+    side: "A" as const,
+    sheetName: "Budget",
+    ref: "B2",
+    label: "salary",
+  },
+  {
+    category: "decided" as const,
+    side: "B" as const,
+    sheetName: "Budget",
+    ref: "B7",
+    label: "rent",
+  },
+  {
+    category: "not-carried" as const,
+    side: "both" as const,
+    sheetName: "Assumptions",
+    label: "chart",
+  },
+];
+
+/** The state of a combine in progress: one disagreement, one refused sheet. */
+function fakeState() {
+  return {
     automatic: [
       { sheetName: "Budget", ref: "B2", value: "12000", source: "A" as const },
       { sheetName: "Budget", ref: "B3", value: "900", source: "B" as const },
@@ -18,30 +42,15 @@ function fakeStore(): StoreAdapter {
     ],
     fallbacks: [{ sheetName: "Assumptions" }],
     choices: {} as Record<string, { id: string; pick: "A" | "B" | "custom" }>,
-    report: [
-      {
-        category: "applied" as const,
-        side: "A" as const,
-        sheetName: "Budget",
-        ref: "B2",
-        label: "salary",
-      },
-      {
-        category: "decided" as const,
-        side: "B" as const,
-        sheetName: "Budget",
-        ref: "B7",
-        label: "rent",
-      },
-      {
-        category: "not-carried" as const,
-        side: "both" as const,
-        sheetName: "Assumptions",
-        label: "chart",
-      },
-    ],
+    report: REPORT,
     ready: false,
+    workbookReady: false,
   };
+}
+
+/** A combine plan with one disagreement and one refused sheet. */
+function fakeStore(): StoreAdapter {
+  const state = fakeState();
   return {
     ...emptyStore(),
     combine: state,
@@ -50,7 +59,9 @@ function fakeStore(): StoreAdapter {
     },
     finalizeCombine: async () => {
       state.ready = true;
+      state.workbookReady = true;
     },
+    downloadCombinedWorkbook: () => undefined,
   } as unknown as StoreAdapter;
 }
 
@@ -78,6 +89,7 @@ function emptyStore(): StoreAdapter {
     startCombine: async () => undefined,
     chooseDisagreement: () => undefined,
     finalizeCombine: async () => undefined,
+    downloadCombinedWorkbook: () => undefined,
     cellHistory: null,
     showCellHistory: async () => undefined,
     authorName: "",
@@ -151,6 +163,31 @@ describe("CombineScreen steps", () => {
     expect(within(report).getByRole("heading", { name: /^Settled by you/ })).toBeTruthy();
     expect(within(report).getByRole("heading", { name: /^Not carried over/ })).toBeTruthy();
     expect(within(report).getByRole("heading", { name: /^To check/ })).toBeTruthy();
+  });
+});
+
+describe("CombineScreen last step", () => {
+  it("offers the combined workbook once the combine is done", async () => {
+    const store = fakeStore();
+    renderScreen(store);
+    goToStepTwo();
+    settleAll();
+    fireEvent.click(screen.getByTestId("combine-button"));
+    await act(async () => undefined);
+
+    const download = screen.getByRole("button", { name: "Download the combined workbook" });
+    expect((download as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.queryByText(/not available yet/)).toBeNull();
+  });
+
+  it("lists the settled cell with the value the user kept", () => {
+    renderScreen(fakeStore());
+    goToStepTwo();
+    settleAll();
+    fireEvent.click(screen.getByTestId("combine-button"));
+    const settled = screen.getByTestId("report").querySelectorAll(".report-section")[1];
+    expect(settled?.textContent).toContain("B7");
+    expect(settled?.textContent).toContain("rent");
   });
 });
 

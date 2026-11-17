@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen, within } from "@testing-librar
 import type { ReactNode } from "react";
 import { GROUP_SEPARATOR } from "@suture/ui";
 import { LangContext, type Lang } from "../../i18n/lang";
+import { NavigationContext } from "../../router";
 import {
   StoreContext,
   type ComparisonRow,
@@ -82,6 +83,7 @@ function fakeStore(patch: Partial<StoreAdapter> = {}): StoreAdapter {
     startCombine: async () => undefined,
     chooseDisagreement: () => undefined,
     finalizeCombine: async () => undefined,
+    downloadCombinedWorkbook: () => undefined,
     cellHistory: null,
     showCellHistory: async () => undefined,
     authorName: "",
@@ -92,10 +94,12 @@ function fakeStore(patch: Partial<StoreAdapter> = {}): StoreAdapter {
   return { ...base, ...patch };
 }
 
-function renderScreen(store: StoreAdapter, lang: Lang = "en"): void {
+function renderScreen(store: StoreAdapter, lang: Lang = "en", go: (screen: unknown, params?: unknown) => void = () => undefined): void {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <LangContext.Provider value={{ lang, setLang: () => undefined }}>
-      <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+      <NavigationContext.Provider value={{ screen: "compare", params: {}, go, back: () => undefined }}>
+        <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+      </NavigationContext.Provider>
     </LangContext.Provider>
   );
   render(<CompareScreen />, { wrapper });
@@ -348,6 +352,22 @@ describe("keyboard navigation", () => {
     const live = document.querySelector(".compare-live") as HTMLElement;
     expect(live.getAttribute("aria-live")).toBe("polite");
     expect(live.textContent).toBe("Sheet 1, cell B9, Typed change, 5 becomes 6");
+  });
+});
+
+describe("cell history (SUT-F-26)", () => {
+  it("opens the history of the cell of the line the user clicked", () => {
+    const go = vi.fn();
+    renderScreen(fakeStore(), "en", go);
+    fireEvent.click(rows()[0]!);
+    expect(go).toHaveBeenCalledWith("cell-history", { sheetId: 1, ref: "B7" });
+  });
+
+  it("opens the same history with the Enter key", () => {
+    const go = vi.fn();
+    renderScreen(fakeStore(), "en", go);
+    fireEvent.keyDown(rows()[1]!, { key: "Enter" });
+    expect(go).toHaveBeenCalledWith("cell-history", { sheetId: 1, ref: "B9" });
   });
 });
 

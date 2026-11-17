@@ -20,6 +20,8 @@ export interface ComparisonGridProps {
   t: Translate;
   lang: Lang;
   gridRef?: Ref<ComparisonGridHandle>;
+  /** Opens the history of the cell of a line (SUT-F-26). */
+  onOpenHistory: (row: ComparisonRow) => void;
 }
 
 /**
@@ -71,6 +73,7 @@ export function ComparisonGrid(props: ComparisonGridProps) {
           rowRef={rowRef}
           onFocus={nav.setActive}
           onKeyDown={nav.onKeyDown}
+          onOpenHistory={props.onOpenHistory}
         />
       </div>
       <p className="compare-live" role="status" aria-live="polite">

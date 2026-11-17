@@ -33,6 +33,7 @@ function store(overrides: Partial<StoreAdapter> = {}): StoreAdapter {
     startCombine: async () => undefined,
     chooseDisagreement: () => undefined,
     finalizeCombine: async () => undefined,
+    downloadCombinedWorkbook: () => undefined,
     cellHistory: null,
     showCellHistory: async () => undefined,
     authorName: "",

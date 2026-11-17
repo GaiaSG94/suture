@@ -3,11 +3,26 @@
  * cell level (never rebuild it), offer the file to the user, and record the
  * result as a version with two origins (SUT-F-22, SUT-F-23).
  */
-import type { ReportEntry, SutureStore } from "@suture/contracts";
+import type { DisagreementChoice, ReportEntry, SutureStore } from "@suture/contracts";
 import type { AdapterDeps, SessionState } from "./actions";
 import { refresh } from "./actions";
 import { writeLastExport } from "./export-reminder";
 import type { Registry } from "./registry";
+
+/** True when two sets of decisions are the same. */
+function sameChoices(
+  left: Record<string, DisagreementChoice>,
+  right: Record<string, DisagreementChoice>,
+): boolean {
+  const keys = (choices: Record<string, DisagreementChoice>) => Object.keys(choices).sort();
+  const leftKeys = keys(left);
+  const rightKeys = keys(right);
+  if (leftKeys.length !== rightKeys.length) return false;
+  return leftKeys.every((key, index) => {
+    if (rightKeys[index] !== key) return false;
+    return JSON.stringify(left[key]) === JSON.stringify(right[key]);
+  });
+}
 
 const CATEGORY_LABELS: Record<ReportEntry["category"], string> = {
   applied: "Applied",
@@ -40,9 +55,9 @@ export function combinedFileName(workbookName: string): string {
 }
 
 /**
- * Applies the decisions, patches the carrier and records the combined version.
- * Throws when a disagreement is still open — the assistant must not be able to
- * save a half-decided combine (SUT-F-19).
+ * Applies the decisions, patches the carrier archive at
+ * cell level (never rebuild it), offer the file to the user, and record the
+ * result as a version with two origins (SUT-F-22, SUT-F-23).
  */
 export async function finalizeCombine(
   deps: AdapterDeps,
@@ -51,6 +66,14 @@ export async function finalizeCombine(
 ): Promise<SessionState> {
   const { plan, sides, store } = session;
   if (plan === null || sides === null || store === null) return session;
+
+  // The same meeting already produced this file: offer it again, never
+  // record the same combine twice.
+  const produced = session.combined;
+  if (produced !== null && sameChoices(produced.choices, session.choices)) {
+    deps.host.download(produced.name, produced.bytes);
+    return session;
+  }
 
   const resolved = await deps.engines.resolveMerge(plan, Object.values(session.choices));
   const carrierVersion = plan.carrier === "A" ? sides.a : sides.b;
@@ -71,7 +94,8 @@ export async function finalizeCombine(
   const report = renderReport(resolved.report);
   const name = registry.find(session.workbookId ?? "")?.name ?? "workbook.xlsx";
 
-  deps.host.download(combinedFileName(name), bytes);
+  const fileName = combinedFileName(name);
+  deps.host.download(fileName, bytes);
   await store.commitCombine({
     file: bytes,
     note: `Combined ${sides.a.slice(0, 7)} and ${sides.b.slice(0, 7)}`,
@@ -80,9 +104,22 @@ export async function finalizeCombine(
     report,
   });
 
-  // The plan is kept so the last step can show the report; only the pending
-  // decisions are cleared.
-  return refresh({ ...session, choices: {}, report: resolved.report });
+  // The decisions and the report are kept: the last step shows what the user
+  // settled, and the combined file stays available for a new download.
+  return refresh({
+    ...session,
+    report: resolved.report,
+    combined: { name: fileName, bytes, choices: { ...session.choices } },
+  });
+}
+
+/** Downloads the combined workbook again, without recomputing it. */
+export function downloadCombinedWorkbook(
+  deps: AdapterDeps,
+  session: SessionState,
+): void {
+  if (session.combined === null) return;
+  deps.host.download(session.combined.name, session.combined.bytes);
 }
 
 /** Restores a version as a new version, then refreshes the history. */

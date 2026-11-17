@@ -14,6 +14,8 @@ export interface GridRowsProps {
   rowRef: (index: number) => Ref<HTMLDivElement>;
   onFocus: (index: number) => void;
   onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
+  /** Opens the history of the cell of a line (SUT-F-26). */
+  onOpenHistory: (row: ComparisonRow) => void;
 }
 
 /** Accessible name of one line of the grid. */
@@ -50,6 +52,7 @@ export function GridRows(props: GridRowsProps) {
               rowRef={props.rowRef(index)}
               onFocus={() => props.onFocus(index)}
               onKeyDown={props.onKeyDown}
+              onOpenHistory={() => props.onOpenHistory(row)}
             />
           </div>
         );
