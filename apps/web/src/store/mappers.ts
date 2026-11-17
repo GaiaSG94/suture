@@ -12,6 +12,7 @@ import type {
   Side,
   VersionMeta,
 } from "@suture/contracts";
+import { reportForDisplay } from "./report";
 import type {
   ComparisonFilter,
   ComparisonRow,
@@ -141,9 +142,11 @@ export function toCombineView(
   names: SheetNames,
   choices: Record<string, DisagreementChoice>,
   report: ReportEntry[],
+  workbookReady = false,
 ): CombineView {
   const answered = plan.disagreements.every((item) => choices[item.id] !== undefined);
   const fallbacksChosen = plan.fallbacks.every((item) => item.keptSide !== undefined);
+  const entries = report.length > 0 ? report : plan.report;
   return {
     automatic: automaticOf(plan, names),
     disagreements: disagreementsOf(plan, names),
@@ -152,8 +155,9 @@ export function toCombineView(
       keptSide: item.keptSide,
     })),
     choices,
-    report: report.length > 0 ? report : plan.report,
+    report: reportForDisplay(entries, names),
     ready: answered && fallbacksChosen,
+    workbookReady,
   };
 }
 

@@ -22,6 +22,7 @@ import {
   versionSummaries,
 } from "./actions";
 import {
+  downloadCombinedWorkbook,
   downloadVersion,
   exportWorkbook,
   finalizeCombine,
@@ -220,6 +221,9 @@ function combineActions(core: Core, translate: Translate) {
         },
         translate,
       );
+    },
+    downloadCombinedWorkbook: () => {
+      downloadCombinedWorkbook(core.deps, core.state.session);
     },
     combineSides: () => combineSidesOf(core.state.session),
   };

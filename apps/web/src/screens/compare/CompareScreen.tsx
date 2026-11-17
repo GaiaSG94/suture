@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import { useLang, type Lang } from "../../i18n/lang";
+import { useNavigation } from "../../router";
 import {
   useStore,
   type ComparisonFilter,
@@ -27,6 +28,7 @@ export function CompareScreen() {
   const { lang } = useLang();
   const t: Translate = (key) => translateScreen(lang, key);
   const store = useStore();
+  const nav = useNavigation();
   const gridRef = useRef<ComparisonGridHandle>(null);
   const view = store.comparison;
   const filter = view?.filter ?? NO_FILTER;
@@ -36,6 +38,11 @@ export function CompareScreen() {
     [view, filter],
   );
   const sheetIds = useMemo(() => (view === null ? [] : sheetIdsOf(view.rows)), [view]);
+
+  // Clicking a difference opens the history of that cell (SUT-F-26).
+  const openHistory = (row: ComparisonRow) => {
+    nav.go("cell-history", { sheetId: row.sheetId, ref: row.ref });
+  };
 
   return (
     <section className="screen compare-screen" aria-labelledby="compare-title">
@@ -52,6 +59,7 @@ export function CompareScreen() {
           lang={lang}
           t={t}
           gridRef={gridRef}
+          onOpenHistory={openHistory}
         />
       )}
     </section>
@@ -98,6 +106,7 @@ interface CompareLayoutProps {
   lang: Lang;
   t: Translate;
   gridRef: RefObject<ComparisonGridHandle | null>;
+  onOpenHistory: (row: ComparisonRow) => void;
 }
 
 /** The working screen: grid on the left, summary and filters on the right. */
@@ -120,7 +129,13 @@ function CompareLayout(props: CompareLayoutProps) {
         {props.rows.length === 0 ? (
           <p className="compare-state">{t("grid.empty")}</p>
         ) : (
-          <ComparisonGrid rows={props.rows} t={t} lang={props.lang} gridRef={props.gridRef} />
+          <ComparisonGrid
+            rows={props.rows}
+            t={t}
+            lang={props.lang}
+            gridRef={props.gridRef}
+            onOpenHistory={props.onOpenHistory}
+          />
         )}
       </div>
       <div className="compare-side">

@@ -41,6 +41,18 @@ export interface SessionState {
   report: ReportEntry[];
   /** Scenarios of the open workbook, reference first. */
   scenarios: { name: string; reference: boolean; head: string }[];
+  /** The combined file of the last combine, ready to be offered again. */
+  combined: CombinedFile | null;
+}
+
+/** The combined workbook, as it was produced. */
+export interface CombinedFile {
+  /** Name offered to the user. */
+  name: string;
+  /** Bytes of the combined workbook. */
+  bytes: Uint8Array;
+  /** The decisions the file was produced from. */
+  choices: Record<string, DisagreementChoice>;
 }
 
 export const EMPTY_SESSION: SessionState = {
@@ -55,6 +67,7 @@ export const EMPTY_SESSION: SessionState = {
   sides: null,
   report: [],
   scenarios: [],
+  combined: null,
 };
 
 /** Refusal messages, translated by the caller. */
@@ -263,6 +276,8 @@ export async function planCombine(
     ...session,
     plan,
     choices: {},
+    report: [],
+    combined: null,
     sides: { origin, a, b },
     sheetNames: namesOf(plan.carrier === "A" ? aView : bView),
   };
@@ -271,7 +286,13 @@ export async function planCombine(
 /** The combine view, from the current plan and choices. */
 export function combineView(session: SessionState): CombineView | null {
   if (session.plan === null) return null;
-  return toCombineView(session.plan, session.sheetNames, session.choices, []);
+  return toCombineView(
+    session.plan,
+    session.sheetNames,
+    session.choices,
+    session.report,
+    session.combined !== null,
+  );
 }
 
 /** Records one decision of the user. */

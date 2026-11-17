@@ -24,6 +24,7 @@ function sampleState(): CombineState {
     choices: {},
     report: [],
     ready: false,
+    workbookReady: false,
   };
 }
 

@@ -41,6 +41,9 @@ export function CellHistoryScreen() {
     <section className="screen cell-history" aria-labelledby="cell-history-title">
       <h2 id="cell-history-title">{t("title")}</h2>
       <p className="step-hint">{t("subtitle")}</p>
+      <button type="button" className="link-button" onClick={() => nav.back()}>
+        {t("close")}
+      </button>
       {sheetId === undefined || ref === undefined ? (
         <p className="empty-state">{t("placeholder")}</p>
       ) : null}
