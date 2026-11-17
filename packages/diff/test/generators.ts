@@ -16,7 +16,7 @@ export const cellRecordArb: fc.Arbitrary<CellRecord> = fc.record({
 export const canonicalSheetArb: fc.Arbitrary<CanonicalSheet> = fc
   .record({
     sheetId: fc.integer({ min: 1, max: 10 }),
-    name: fc.constantFrom("Budget", "Hypotheses", "Staff", "Revenue"),
+    name: fc.constantFrom("Budget", "Assumptions", "Staff", "Revenue"),
     cells: fc.uniqueArray(cellRecordArb, {
       selector: (cell) => cell.ref,
       maxLength: 25,

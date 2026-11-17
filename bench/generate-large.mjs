@@ -32,16 +32,16 @@ const EXPECTED_CELLS = ROWS * COLUMNS;
 const SEED = 1_234_567; // fixed: two runs produce the very same bytes
 const DEFAULT_OUTPUT = resolve(dirname(fileURLToPath(import.meta.url)), "data", "large-200k.xlsx");
 
-const HEADERS = ["Poste", "Quantité", "Prix unitaire", "Date", "Catégorie", "Total", "Cumul", "Taux", "Validé", "Note"];
+const HEADERS = ["Item", "Quantity", "Unit price", "Date", "Category", "Total", "Cumulative", "Rate", "Approved", "Note"];
 const LABELS = [
-  "Fournitures de bureau", "Prestation de conseil", "Maintenance informatique", "Frais de déplacement",
-  "Licence logicielle", "Formation du personnel", "Loyer du local", "Assurance professionnelle",
-  "Affranchissement", "Téléphonie", "Électricité", "Chauffage", "Eau", "Nettoyage",
-  "Petit équipement", "Outillage", "Matières premières", "Emballages", "Transport de marchandises",
-  "Publicité", "Salon professionnel", "Honoraires comptables", "Frais bancaires", "Impôts et taxes",
+  "Office supplies", "Consulting service", "IT maintenance", "Travel expenses",
+  "Software licence", "Staff training", "Office rent", "Professional insurance",
+  "Postage", "Telephony", "Electricity", "Heating", "Water", "Cleaning",
+  "Small equipment", "Tools", "Raw materials", "Packaging", "Goods transport",
+  "Advertising", "Trade show", "Accounting fees", "Bank fees", "Taxes and duties",
 ];
-const CATEGORIES = ["Achats", "Services", "Logistique", "Ressources humaines", "Fiscalité", "Investissement"];
-const NOTES = ["À lettrier", "Validé par la direction", "En attente de pièce", "Rapproché du bon de commande"];
+const CATEGORIES = ["Purchases", "Services", "Logistics", "Human resources", "Taxation", "Investment"];
+const NOTES = ["To be reconciled", "Approved by management", "Awaiting invoice", "Reconciled with the purchase order"];
 
 /** Deterministic pseudo-random generator (mulberry32), seeded. */
 function mulberry32(seed) {
@@ -104,12 +104,12 @@ export function buildDescriptor() {
   const cells = headerCells();
   for (let row = 2; row <= ROWS; row += 1) cells.push(...dataCells(row, random));
   if (cells.length !== EXPECTED_CELLS) {
-    throw new Error(`generate-large: attendu ${EXPECTED_CELLS} cellules, obtenu ${cells.length}`);
+    throw new Error(`generate-large: expected ${EXPECTED_CELLS} cells, got ${cells.length}`);
   }
   return {
-    name: "Suture — grand registre (banc de performance)",
+    name: "Suture — large ledger (performance bench)",
     options: { sharedStrings: true, sharedFormulas: true },
-    sheets: [{ name: "Registre", cells }],
+    sheets: [{ name: "Ledger", cells }],
   };
 }
 
@@ -131,8 +131,8 @@ function main() {
   const digest = createHash("sha256").update(archive).digest("hex");
   const seconds = ((performance.now() - started) / 1000).toFixed(1);
   console.log(`generate-large: ${output}`);
-  console.log(`  ${EXPECTED_CELLS} cellules (${ROWS} lignes × ${COLUMNS} colonnes), ${(archive.length / 2 ** 20).toFixed(1)} Mo`);
-  console.log(`  sha256 ${digest.slice(0, 32)}… — préparation en ${seconds} s (hors mesures publiées)`);
+  console.log(`  ${EXPECTED_CELLS} cells (${ROWS} rows × ${COLUMNS} columns), ${(archive.length / 2 ** 20).toFixed(1)} MB`);
+  console.log(`  sha256 ${digest.slice(0, 32)}… — prepared in ${seconds} s (outside published measurements)`);
 }
 
 if (isEntryPoint()) main();

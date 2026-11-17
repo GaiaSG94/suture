@@ -26,7 +26,7 @@ const ROWS =
 function fixtureParts() {
   return buildWorkbookParts({
     sheets: [{ name: "Budget", sheetId: 1, rows: ROWS }],
-    sharedStrings: [{ text: "Loyer" }, { text: "Tab\there\nand\\back" }, { text: "Far" }],
+    sharedStrings: [{ text: "Rent" }, { text: "Tab\there\nand\\back" }, { text: "Far" }],
     numberFormats: { "165": "#,##0.00 €" },
     cellFormats: [0, 0, 165],
   });

@@ -8,30 +8,30 @@
     {
       "name": "Budget",
       "cells": [
-        { "ref": "A1", "value": "Poste" },
-        { "ref": "B1", "value": "Montant" },
-        { "ref": "A2", "value": "Loyer" },
+        { "ref": "A1", "value": "Item" },
+        { "ref": "B1", "value": "Amount" },
+        { "ref": "A2", "value": "Rent" },
         { "ref": "B2", "value": 13500, "format": "#,##0 €" },
-        { "ref": "A3", "value": "Énergie" },
+        { "ref": "A3", "value": "Energy" },
         { "ref": "B3", "value": 2200, "format": "#,##0 €" },
-        { "ref": "A4", "value": "Fournitures" },
+        { "ref": "A4", "value": "Supplies" },
         { "ref": "B4", "value": 800, "format": "#,##0 €" },
-        { "ref": "A5", "value": "Salaires" },
+        { "ref": "A5", "value": "Salaries" },
         { "ref": "B5", "value": 60000, "format": "#,##0 €" },
         { "ref": "A6", "value": "Total" },
         { "ref": "B6", "formula": "SUM(B2:B5)", "cached": 76500, "format": "#,##0 €" }
       ]
     },
     {
-      "name": "Hypothèses",
+      "name": "Assumptions",
       "cells": [
-        { "ref": "A1", "value": "Hypothèse" },
-        { "ref": "B1", "value": "Valeur" },
-        { "ref": "A2", "value": "Croissance" },
+        { "ref": "A1", "value": "Assumption" },
+        { "ref": "B1", "value": "Value" },
+        { "ref": "A2", "value": "Growth" },
         { "ref": "B2", "value": 0.03, "format": "0 %" },
-        { "ref": "A3", "value": "Emplois" },
+        { "ref": "A3", "value": "Headcount" },
         { "ref": "B3", "value": 2 },
-        { "ref": "A4", "value": "Salaire moyen" },
+        { "ref": "A4", "value": "Average salary" },
         { "ref": "B4", "value": 3200, "format": "#,##0 €" }
       ]
     }

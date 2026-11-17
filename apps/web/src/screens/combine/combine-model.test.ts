@@ -20,7 +20,7 @@ function sampleState(): CombineState {
     disagreements: [
       { id: "d1", sheetName: "Budget", ref: "B7", base: "11000", a: "12000", b: "13500" },
     ],
-    fallbacks: [{ sheetName: "Hypotheses" }],
+    fallbacks: [{ sheetName: "Assumptions" }],
     choices: {},
     report: [],
     ready: false,
@@ -45,13 +45,13 @@ describe("pendingFallbacks", () => {
   });
 
   it("accepts a side chosen by the user", () => {
-    expect(pendingFallbacks(sampleState(), { Hypotheses: "B" })).toHaveLength(0);
+    expect(pendingFallbacks(sampleState(), { Assumptions: "B" })).toHaveLength(0);
   });
 });
 
 describe("canBuildReport", () => {
   it("refuses while a disagreement is open", () => {
-    expect(canBuildReport(sampleState(), { Hypotheses: "B" })).toBe(false);
+    expect(canBuildReport(sampleState(), { Assumptions: "B" })).toBe(false);
   });
 
   it("refuses while a refused sheet has no side", () => {
@@ -63,7 +63,7 @@ describe("canBuildReport", () => {
   it("accepts when everything is answered and kept", () => {
     const state = sampleState();
     state.choices.d1 = { id: "d1", pick: "A" };
-    expect(canBuildReport(state, { Hypotheses: "B" })).toBe(true);
+    expect(canBuildReport(state, { Assumptions: "B" })).toBe(true);
   });
 });
 
